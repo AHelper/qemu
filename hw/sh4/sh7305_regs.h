@@ -1282,4 +1282,9 @@
 #define SH7305_BCR3_A7       0x1f800050
 #define SH7305_BCR4_A7       0x1e0a00f0
 
+/*
+ * From SH7724
+ */
+
+
 #endif
