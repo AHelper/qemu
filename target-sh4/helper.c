@@ -527,7 +527,7 @@ hwaddr superh_cpu_get_phys_page_debug(CPUState *cs, vaddr addr)
 }
 
 void cpu_load_tlb(CPUSH4State * env)
-{
+{ /* NOTE, I know that there is an extended TLB mode in the SH7724, may be used in SH7305 */
     SuperHCPU *cpu = sh_env_get_cpu(env);
     int n = cpu_mmucr_urc(env->mmucr);
     tlb_t * entry = &env->utlb[n];
@@ -871,4 +871,9 @@ bool superh_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
         return true;
     }
     return false;
+}
+
+void superh_cpu_unassigned_access(CPUState *cpu, hwaddr addr, bool is_write, bool is_exec, int opaque, unsigned size)
+{
+  printf("Unassigned %s size %d at %08X\n", is_write ? "read" : "write", size, addr);
 }

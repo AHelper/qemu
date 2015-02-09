@@ -313,6 +313,7 @@ static void superh_cpu_class_init(ObjectClass *oc, void *data)
 #else
     cc->get_phys_page_debug = superh_cpu_get_phys_page_debug;
 #endif
+    cc->do_unassigned_access = superh_cpu_unassigned_access;
     dc->vmsd = &vmstate_sh_cpu;
     cc->gdb_num_core_regs = 59;
 }

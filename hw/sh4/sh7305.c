@@ -76,6 +76,8 @@ typedef struct SH7305State {
     uint16_t periph_pdtrb;	/* Imposed by the peripherals */
     uint16_t periph_portdirb;	/* Direction seen from the peripherals */
     sh7305_io_device *devices[NB_DEVICES];	/* External peripherals */
+    
+    // SH7305-specific sections below
 
     /* Cache */
     uint32_t ccr;
