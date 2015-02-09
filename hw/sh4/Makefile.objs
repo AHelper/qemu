@@ -1,4 +1,4 @@
-obj-y += shix.o r2d.o
+obj-y += shix.o r2d.o prizm.o
 
-obj-y += sh7750.o sh7750_regnames.o
+obj-y += sh7750.o sh4_regnames.o sh7305.o
 obj-y += sh_pci.o

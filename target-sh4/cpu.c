@@ -229,6 +229,32 @@ static const TypeInfo sh7785_type_info = {
     .instance_init = sh7785_cpu_initfn,
 };
 
+static void sh7305_cpu_initfn(Object *obj)
+{
+    SuperHCPU *cpu = SUPERH_CPU(obj);
+    CPUSH4State *env = &cpu->env;
+
+    env->id = SH_CPU_SH7305;
+    env->features = SH_FEATURE_SH4A;
+}
+
+static void sh7305_class_init(ObjectClass *oc, void *data)
+{
+    SuperHCPUClass *scc = SUPERH_CPU_CLASS(oc);
+
+    scc->name = "SH7305";
+    scc->pvr = 0x10300700;
+    scc->prr = 0x00000200;
+    scc->cvr = 0x71440211;
+}
+
+static const TypeInfo sh7305_type_info = {
+    .name = TYPE_SH7305_CPU,
+    .parent = TYPE_SUPERH_CPU,
+    .class_init = sh7305_class_init,
+    .instance_init = sh7305_cpu_initfn,
+};
+
 static void superh_cpu_realizefn(DeviceState *dev, Error **errp)
 {
     CPUState *cs = CPU(dev);
@@ -307,6 +333,7 @@ static void superh_cpu_register_types(void)
     type_register_static(&sh7750r_type_info);
     type_register_static(&sh7751r_type_info);
     type_register_static(&sh7785_type_info);
+    type_register_static(&sh7305_type_info);
 }
 
 type_init(superh_cpu_register_types)
