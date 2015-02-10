@@ -42,17 +42,12 @@
 
 typedef struct SH7305State {
     MemoryRegion iomem;
-    MemoryRegion iomem_1f0;
-    MemoryRegion iomem_ff0;
-    MemoryRegion iomem_1f8;
-    MemoryRegion iomem_ff8;
-    MemoryRegion iomem_1fc;
-    MemoryRegion iomem_ffc;
+    MemoryRegion iomem_a400;
     MemoryRegion mmct_iomem;
     /* CPU */
     SuperHCPU *cpu;
     /* Peripheral frequency in Hz */
-    uint32_t periph_freq;
+    uint32_t periph_freq; // CPG knows more, good enough for now
     /* SDRAM controller */
     uint32_t bcr1;
     uint16_t bcr2;
@@ -78,6 +73,14 @@ typedef struct SH7305State {
     sh7305_io_device *devices[NB_DEVICES];	/* External peripherals */
     
     // SH7305-specific sections below
+#ifndef DATA
+#define DATA
+#endif /* DATA */
+
+// SH7724 CPG
+#include "sh7724_cpg.inc"
+
+#undef DATA
 
     /* Cache */
     uint32_t ccr;
@@ -458,16 +461,161 @@ static void sh7305_mem_writel(void *opaque, hwaddr addr,
     }
 }
 
+// static const MemoryRegionOps sh7305_mem_ops = {
+//     .old_mmio = {
+//         .read = {sh7305_mem_readb,
+//                  sh7305_mem_readw,
+//                  sh7305_mem_readl },
+//         .write = {sh7305_mem_writeb,
+//                   sh7305_mem_writew,
+//                   sh7305_mem_writel },
+//     },
+//     .endianness = DEVICE_NATIVE_ENDIAN,
+// };
+
+// Template for peripherals
+
+// /*
+//  * SH<MPU #> <Peripheral Name>
+//  * 
+//  * HEADER - Defines and struct
+//  * DATA - Struct instantiation
+//  * HANDLER - Read/write hander (addr, size, and value are available)
+//  * INIT - Peripheral initialization
+//  */
+// 
+// #ifdef HEADER
+// #define SH<#>_<Periph>_BASE         0xnnnnnnnn
+// #define SH<#>_<Periph>_END          0xnnnnnnnn+m
+// 
+// #ifdef BO
+// #undef BO
+// #endif
+// #define BO(x) (SH<#>_<Periph>_BASE+x)
+// 
+// /* Register Name */
+// #define SH<#>_<Periph>_<Reg>       BO(0xn)
+// #define SH<#>_<Periph>_<Reg>_S     1|2|4
+// 
+// struct SH<MPU#><Periph>
+// {
+//   // Variables
+// };
+// 
+// #endif /* HEADER */
+// 
+// #ifdef DATA
+// struct SH<MPU#><Periph> <periph name>;
+// #endif /* DATA */
+// 
+// #ifdef HANDLER
+// #define S (s-><periph name>)
+// // Case: register, size, read, write
+// CASE(SH<#>_<Periph>_<Reg>, SH<#>_<Periph>_<Reg>_S,
+//   // Read code, returning value
+// ,
+//   // Write operation
+// )
+//      
+// #undef S
+// #endif /* HANDLER */
+//      
+// #ifdef INIT
+//   // Set SH<MPU#><Periph> variables to their startup values in s-><periph name>
+// #endif /* INIT */
+
+// END TEMPLATE
+
+static uint64_t sh7305_mem_read(void *opaque,
+                     hwaddr addr,
+                     unsigned size)
+{
+  SH7305State *s = opaque;
+  
+#define HANDLER
+#define BASE 0xA4000000
+#define BAD_SIZE(a,s) do{ printf("Invalid peripheral read size: A=" a " S=%d addr=%08X size=%d\n", s, addr+BASE, size); return 0; }while(0)
+#define CASE(a,s,r,w) \
+    case ((a)-BASE): \
+      if(size != (s)) BAD_SIZE(#a,s); \
+      else {r} \
+      break;
+
+      switch(addr)
+      {
+// SH7724 CPG
+#include "sh7724_cpg.inc"
+        default:
+          printf("Unknown peripheral read: addr=%08X size=%d\n", addr+BASE, size); 
+      }
+      return 0;
+
+#undef CASE
+#undef BASE
+#undef HANDLER
+  /*
+  switch(size)
+  {
+    case 1:
+      switch(addr)
+      {
+        default:
+          printf("Unknown read of size 1 at %08X\n", addr);
+      }
+      break;
+    case 2:
+      switch(addr)
+      {
+        default:
+          printf("Unknown read of size 2 at %08X\n", addr);
+      }
+      break;
+    case 4:
+      switch(addr)
+      {
+        default:
+          printf("Unknown read of size 4 at %08X\n", addr);
+      }
+      break;
+    default:
+      printf("Unknown peripheral read size '%d'\n", size);
+  }*/
+}
+
+static void sh7305_mem_write(void *opaque,
+                  hwaddr addr,
+                  uint64_t value,
+                  unsigned size)
+{
+  SH7305State *s = opaque;
+  
+#define HANDLER
+#define BASE 0xA4000000
+#define BAD_SIZE(a,s) do{ printf("Invalid peripheral write size: A=" a " S=%d addr=%08X size=%d value=%08X\n", s, addr+BASE, size, value); return 0; }while(0)
+#define CASE(a,s,r,w) \
+    case ((a)-BASE): \
+      if(size != (s)) BAD_SIZE(#a,s); \
+      else {w} \
+      break;
+
+      switch(addr)
+      {
+// SH7724 CPG
+#include "sh7724_cpg.inc"
+        default:
+          printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", addr+BASE, size, value); 
+      }
+      return 0;
+
+#undef CASE
+#undef BASE
+#undef HANDLER
+}
+
 static const MemoryRegionOps sh7305_mem_ops = {
-    .old_mmio = {
-        .read = {sh7305_mem_readb,
-                 sh7305_mem_readw,
-                 sh7305_mem_readl },
-        .write = {sh7305_mem_writeb,
-                  sh7305_mem_writew,
-                  sh7305_mem_writel },
-    },
-    .endianness = DEVICE_NATIVE_ENDIAN,
+  .read = sh7305_mem_read,
+  .write = sh7305_mem_write,
+  .endianness = DEVICE_NATIVE_ENDIAN
 };
 
 /* sh775x interrupt controller tables for sh_intc.c
@@ -738,7 +886,19 @@ SH7305State *sh7305_init(SuperHCPU *cpu, MemoryRegion *sysmem)
     s = g_malloc0(sizeof(SH7305State));
     s->cpu = cpu;
     s->periph_freq = 58000000;	/* 58MHz */
-    memory_region_init_io(&s->iomem, NULL, &sh7305_mem_ops, s,
+    
+#define INIT
+
+// SH7724 CPG
+#include "sh7724_cpg.inc"
+
+#undef INIT
+    
+    memory_region_init_io(&s->iomem_a400, NULL, &sh7305_mem_ops, s, "peripherals", 0x4000000);
+    memory_region_add_subregion(sysmem, 0x4000000, &s->iomem_a400); // Physical address
+    memory_region_init_io(&s->iomem, NULL, &sh7305_mem_ops, s, "peripherals", 0x4000000);
+    memory_region_add_subregion(sysmem, 0xFF000000, &s->iomem); // Physical address
+    /*memory_region_init_io(&s->iomem, NULL, &sh7305_mem_ops, s,
                           "memory", 0x1fc01000);
 
     memory_region_init_alias(&s->iomem_1f0, NULL, "memory-1f0",
@@ -764,7 +924,7 @@ SH7305State *sh7305_init(SuperHCPU *cpu, MemoryRegion *sysmem)
     memory_region_init_alias(&s->iomem_ffc, NULL, "memory-ffc",
                              &s->iomem, 0x1fc00000, 0x1000);
     memory_region_add_subregion(sysmem, 0xffc00000, &s->iomem_ffc);
-
+*/
     memory_region_init_io(&s->mmct_iomem, NULL, &sh7305_mmct_ops, s,
                           "cache-and-tlb", 0x08000000);
     memory_region_add_subregion(sysmem, 0xf0000000, &s->mmct_iomem);

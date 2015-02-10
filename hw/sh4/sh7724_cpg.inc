@@ -1,5 +1,10 @@
 /*
  * SH7724 CPG
+ * 
+ * HEADER - Defines and struct
+ * DATA - Struct instantiation
+ * HANDLER - Read/write hander (addr, size, and value are available)
+ * INIT - Peripheral initialization
  */
 
 #ifdef HEADER
@@ -39,10 +44,24 @@ struct SH7724CPG
 
 #endif /* HEADER */
 
+#ifdef DATA
+struct SH7724CPG cpg;
+#endif /* DATA */
+
 #ifdef HANDLER
-CASE(sh7724_CPG_FRQCRA)
-#ifdef READ
-  return (cpg.stc << 24) | (cpg.ifc << 20) | (cpg.sfc << 12) | (cpg.bfc << 8) | (cpg.p1fc);
-#else
+#define S (s->cpg)
+// Case: register, size, read, write
+CASE(SH7724_CPG_FRQCRA, SH7724_CPG_FRQCRA_S,
+     printf("SH7724_CPG_FRQCRA read\n");
+  return (S.stc << 24) | (S.ifc << 20) | (S.sfc << 12) | (S.bfc << 8) | (S.p1fc);
+,
   // Handle validation
-#endif
+     printf("FRQCRA got %08X\n", value);
+)
+     
+#undef S
+#endif /* HANDLER */
+     
+#ifdef INIT
+     
+#endif /* INIT */

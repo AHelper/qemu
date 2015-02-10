@@ -1285,6 +1285,13 @@
 /*
  * From SH7724
  */
+#ifndef HEADER
+#define HEADER
+#endif /* HEADER */
 
+// SH7724 CPG
+#include "sh7724_cpg.inc"
+
+#undef HEADER
 
 #endif

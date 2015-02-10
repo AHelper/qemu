@@ -98,8 +98,6 @@ static void prizm_init(MachineState *machine)
 //                            &error_abort);
 //     vmstate_register_ram_global(&sdram[1]);
 //     memory_region_add_subregion(sysmem, 0x0c000000, &sdram[1]);
-
-    s = sh7305_init(cpu, sysmem);
     
 #define FLASH_SIZE 0x400000
     flash = drive_get(IF_PFLASH, 0, 0);
@@ -128,6 +126,7 @@ static void prizm_init(MachineState *machine)
 //     printf("%d\n", memory_region_is_ram(flash0mem));
 //     printf("%d\n", memory_region_is_romd(flash0mem));
 //     printf("%d\n", memory_region_is_rom(flash0mem));
+        s = sh7305_init(cpu, sysmem);
 }
 
 static QEMUMachine prizm_machine = {
