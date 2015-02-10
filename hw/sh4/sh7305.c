@@ -535,6 +535,7 @@ static uint64_t sh7305_mem_read(void *opaque,
 #define HANDLER
 #define BASE 0xA4000000
 #define BAD_SIZE(a,s) do{ printf("Invalid peripheral read size: A=" a " S=%d addr=%08X size=%d\n", s, addr+BASE, size); return 0; }while(0)
+#define TODO do{ printf(#S " read TODO\n"); }while(0)
 #define CASE(a,s,r,w) \
     case ((a)-BASE): \
       if(size != (s)) BAD_SIZE(#a,s); \
@@ -592,6 +593,7 @@ static void sh7305_mem_write(void *opaque,
 #define HANDLER
 #define BASE 0xA4000000
 #define BAD_SIZE(a,s) do{ printf("Invalid peripheral write size: A=" a " S=%d addr=%08X size=%d value=%08X\n", s, addr+BASE, size, value); return 0; }while(0)
+#define TODO do{ printf(#S " write TODO\n"); }while(0)
 #define CASE(a,s,r,w) \
     case ((a)-BASE): \
       if(size != (s)) BAD_SIZE(#a,s); \
