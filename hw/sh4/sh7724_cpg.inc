@@ -17,19 +17,19 @@
 #define BO(x) (SH7724_CPG_BASE+x)
 
 /* Frequency Control Register A */
-#define SH7724_CPG_FRQCRA	BO(0x0)
+#define SH7724_CPG_FRQCRA	SH7724_CPG_BASE+0x0
 #define SH7724_CPG_FRQCRA_S	4
 /* Frequency Control Register B */
-#define SH7724_CPG_FRQCRB	BO(0x04)
+#define SH7724_CPG_FRQCRB	SH7724_CPG_BASE+0x04
 #define SH7724_CPG_FRQCRB_S	4
 /* PLL control register */
-#define SH7724_CPG_PLLCR	BO(0x24)
+#define SH7724_CPG_PLLCR	SH7724_CPG_BASE+0x24
 #define SH7724_CPG_PLLCR_S	4
 /* FLL Multiplication register */
-#define SH7724_CPG_FLLFRQ	BO(0x50)
+#define SH7724_CPG_FLLFRQ	SH7724_CPG_BASE+0x50
 #define SH7724_CPG_FLLFRQ_S	4
 /* Frequency change status register */
-#define SH7724_CPG_LSTATUS	BO(0x60)
+#define SH7724_CPG_LSTATUS	SH7724_CPG_BASE+0x60
 #define SH7724_CPG_LSTATUS_S	4
 
 struct SH7724CPG
@@ -41,6 +41,8 @@ struct SH7724CPG
   uint8_t p1fc;
   uint8_t m1fc;
 };
+
+#undef BO
 
 #endif /* HEADER */
 

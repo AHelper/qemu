@@ -32,6 +32,7 @@
 #include "hw/hw.h"
 #include "hw/sh4/sh.h"
 #include "sysemu/sysemu.h"
+#include "qemu/timer.h"
 #include "sh7305_regs.h"
 #include "sh4_regnames.h"
 #include "hw/sh4/sh_intc.h"
@@ -79,6 +80,7 @@ typedef struct SH7305State {
 
 // SH7724 CPG
 #include "sh7724_cpg.inc"
+#include "sh7720_rtc.inc"
 
 #undef DATA
 
@@ -485,19 +487,19 @@ static void sh7305_mem_writel(void *opaque, hwaddr addr,
 //  */
 // 
 // #ifdef HEADER
-// #define SH<#>_<Periph>_BASE         0xnnnnnnnn
-// #define SH<#>_<Periph>_END          0xnnnnnnnn+m
+// #define SH<MPU #>_<Periph>_BASE         0xnnnnnnnn
+// #define SH<MPU #>_<Periph>_END          0xnnnnnnnn+m
 // 
 // #ifdef BO
 // #undef BO
 // #endif
-// #define BO(x) (SH<#>_<Periph>_BASE+x)
+// #define BO(x) (SH<MPU #>_<Periph>_BASE+x)
 // 
 // /* Register Name */
-// #define SH<#>_<Periph>_<Reg>       BO(0xn)
-// #define SH<#>_<Periph>_<Reg>_S     1|2|4
+// #define SH<MPU #>_<Periph>_<Reg>       BO(0xn)
+// #define SH<MPU #>_<Periph>_<Reg>_S     1|2|4
 // 
-// struct SH<MPU#><Periph>
+// struct SH<MPU #><Periph>
 // {
 //   // Variables
 // };
@@ -505,13 +507,13 @@ static void sh7305_mem_writel(void *opaque, hwaddr addr,
 // #endif /* HEADER */
 // 
 // #ifdef DATA
-// struct SH<MPU#><Periph> <periph name>;
+// struct SH<MPU #><Periph> <periph name>;
 // #endif /* DATA */
 // 
 // #ifdef HANDLER
 // #define S (s-><periph name>)
 // // Case: register, size, read, write
-// CASE(SH<#>_<Periph>_<Reg>, SH<#>_<Periph>_<Reg>_S,
+// CASE(SH<MPU #>_<Periph>_<Reg>, SH<MPU #>_<Periph>_<Reg>_S,
 //   // Read code, returning value
 // ,
 //   // Write operation
@@ -521,10 +523,17 @@ static void sh7305_mem_writel(void *opaque, hwaddr addr,
 // #endif /* HANDLER */
 //      
 // #ifdef INIT
-//   // Set SH<MPU#><Periph> variables to their startup values in s-><periph name>
+//   // Set SH<MPU #><Periph> variables to their startup values in s-><periph name>
 // #endif /* INIT */
 
 // END TEMPLATE
+
+#define FUNCTIONS
+
+#include "sh7724_cpg.inc"
+#include "sh7720_rtc.inc"
+
+#undef FUNCTIONS
 
 static uint64_t sh7305_mem_read(void *opaque,
                      hwaddr addr,
@@ -545,12 +554,15 @@ static uint64_t sh7305_mem_read(void *opaque,
       {
 // SH7724 CPG
 #include "sh7724_cpg.inc"
+// #include "sh7720_rtc.inc"
         default:
-          printf("Unknown peripheral read: addr=%08X size=%d\n", addr+BASE, size); 
+//           printf("Unknown peripheral read: addr=%08X size=%d\n", addr+BASE, size); 
+	  break;
       }
       return 0;
 
 #undef CASE
+#undef BAD_SIZE
 #undef BASE
 #undef HANDLER
   /*
@@ -603,7 +615,8 @@ static void sh7305_mem_write(void *opaque,
 // SH7724 CPG
 #include "sh7724_cpg.inc"
         default:
-          printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", addr+BASE, size, value); 
+//           printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", addr+BASE, size, value);
+	  break;
       }
       return 0;
 
@@ -891,6 +904,7 @@ SH7305State *sh7305_init(SuperHCPU *cpu, MemoryRegion *sysmem)
 
 // SH7724 CPG
 #include "sh7724_cpg.inc"
+#include "sh7720_rtc.inc"
 
 #undef INIT
     
