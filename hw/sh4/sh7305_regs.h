@@ -1291,6 +1291,7 @@
 
 // SH7724 CPG
 #include "sh7724_cpg.inc"
+#include "sh7720_rtc.inc"
 
 #undef HEADER
 
