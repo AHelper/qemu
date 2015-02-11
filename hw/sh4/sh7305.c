@@ -491,13 +491,8 @@ static void sh7305_mem_writel(void *opaque, hwaddr addr,
 // #define SH<MPU #>_<Periph>_BASE         0xnnnnnnnn
 // #define SH<MPU #>_<Periph>_END          0xnnnnnnnn+m
 // 
-// #ifdef BO
-// #undef BO
-// #endif
-// #define BO(x) (SH<MPU #>_<Periph>_BASE+x)
-// 
 // /* Register Name */
-// #define SH<MPU #>_<Periph>_<Reg>       BO(0xn)
+// #define SH<MPU #>_<Periph>_<Reg>       SH<MPU #>_<Periph>_BASE+0xn
 // #define SH<MPU #>_<Periph>_<Reg>_S     1|2|4
 // 
 // struct SH<MPU #><Periph>
