@@ -54,8 +54,10 @@ struct SH7724CMT cmt;
 #define S (s->cmt)
 // Case: register, size, read, write
 CASE(SH7724_CMT_CMSTR, SH7724_CMT_CMSTR_S,
+  TODO
   return (S.counting << 5);
 ,
+  TODO
   if(value & 0x20)
   {
     S.counting = 1;
@@ -66,10 +68,14 @@ CASE(SH7724_CMT_CMSTR, SH7724_CMT_CMSTR_S,
   }
 )
 CASE(SH7724_CMT_CMCSR, SH7724_CMT_CMCSR_S,
+//   printf("SH7724_CMT_CMCSR: %04X\n", (S.matched << 15) | (S.overflowed << 14) | (S.cnt_size << 9) | 
+//       (S.continuous << 8) | (S.wakeup << 7) | (S.interrupt << 5) |
+//       (S.clock));
   return (S.matched << 15) | (S.overflowed << 14) | (S.cnt_size << 9) | 
       (S.continuous << 8) | (S.wakeup << 7) | (S.interrupt << 5) |
       (S.clock);
 ,
+  TODO
   if((value & (1 << 15)) == 0)
     S.matched = 0;
   
@@ -113,16 +119,20 @@ CASE(SH7724_CMT_CMCSR, SH7724_CMT_CMCSR_S,
   }
 )
 CASE(SH7724_CMT_CMCNT, SH7724_CMT_CMCNT_S,
+  TODO
   return S.reg_cmcnt;
 ,
+  TODO
   if(S.cnt_size)
     S.reg_cmcnt = value;
   else
-    S.reg_cmcnt = value & 0xFFFF;
+    S.reg_cmcnt = value & (uint32_t)0xFFFF;
 )
 CASE(SH7724_CMT_CMCOR, SH7724_CMT_CMCOR_S,
+  TODO
   return S.reg_cmcor;
 ,
+  TODO
   if(S.cnt_size)
     S.reg_cmcor = value;
   else
@@ -136,7 +146,7 @@ CASE(SH7724_CMT_CMCOR, SH7724_CMT_CMCOR_S,
   // Set SH7724CMT variables to their startup values in s->cmt
   s->cmt.clock = 0b100;
   
-  s->rtc.rtc_128hz = timer_new_ns(QEMU_CLOCK_REALTIME, sh7720_rtc_timer_expire, s);
+  s->cmt.timer = timer_new_ns(QEMU_CLOCK_REALTIME, sh7724_cmt_timer_expire, s);
 #endif /* INIT */
 
 #ifdef FUNCTIONS

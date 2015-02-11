@@ -599,7 +599,7 @@ static void sh7305_mem_write(void *opaque,
       else {w} \
       break; \
     }
-
+      printf("Peripheral write: addr=%08X size=%d value=%08x\n", (uint32_t)addr+BASE, size, value);
       switch(addr)
       {
 // SH7724 CPG
