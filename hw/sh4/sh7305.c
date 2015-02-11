@@ -81,6 +81,7 @@ typedef struct SH7305State {
 // SH7724 CPG
 #include "sh7724_cpg.inc"
 #include "sh7720_rtc.inc"
+#include "sh7724_cmt.inc"
 
 #undef DATA
 
@@ -526,12 +527,15 @@ static void sh7305_mem_writel(void *opaque, hwaddr addr,
 //   // Set SH<MPU #><Periph> variables to their startup values in s-><periph name>
 // #endif /* INIT */
 
+// TODO: Need a way to specify interrupts and add handlers for changing power states.
+
 // END TEMPLATE
 
 #define FUNCTIONS
 
 #include "sh7724_cpg.inc"
 #include "sh7720_rtc.inc"
+#include "sh7724_cmt.inc"
 
 #undef FUNCTIONS
 
@@ -560,6 +564,7 @@ static uint64_t sh7305_mem_read(void *opaque,
 // SH7724 CPG
 #include "sh7724_cpg.inc"
 #include "sh7720_rtc.inc"
+#include "sh7724_cmt.inc"
         default:
           printf("Unknown peripheral read: addr=%08X size=%d\n", addr+BASE, size); 
 	  break;
@@ -600,8 +605,9 @@ static void sh7305_mem_write(void *opaque,
 // SH7724 CPG
 #include "sh7724_cpg.inc"
 #include "sh7720_rtc.inc"
+#include "sh7724_cmt.inc"
         default:
-          printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", addr+BASE, size, value);
+          printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", (uint32_t)addr+BASE, size, value);
 	  break;
       }
 
@@ -893,6 +899,7 @@ SH7305State *sh7305_init(SuperHCPU *cpu, MemoryRegion *sysmem)
 // SH7724 CPG
 #include "sh7724_cpg.inc"
 #include "sh7720_rtc.inc"
+#include "sh7724_cmt.inc"
 
 #undef INIT
     

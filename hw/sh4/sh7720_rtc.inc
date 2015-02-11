@@ -208,7 +208,6 @@ CASE(SH7720_RTC_RCR3, SH7720_RTC_RCR3_S,
   TODO
 )
 
-     
 #undef S
 #endif /* HANDLER */
      
@@ -219,14 +218,14 @@ CASE(SH7720_RTC_RCR3, SH7720_RTC_RCR3_S,
 #endif /* INIT */
 	       
 #ifdef FUNCTIONS
-void sh7720_rtc_reset(void *opaque)
+static void sh7720_rtc_reset(void *opaque)
 {
   SH7305State *s = opaque;
   
   timer_mod(s->rtc.rtc_128hz, qemu_clock_get_ns(QEMU_CLOCK_REALTIME) + 7812500); // 128Hz
 }
 
-void sh7720_rtc_timer_expire(void *opaque)
+static void sh7720_rtc_timer_expire(void *opaque)
 {
   SH7305State *s = opaque;
   uint8_t bit_1hz = s->rtc.cnt_64hz & 0b01000000;

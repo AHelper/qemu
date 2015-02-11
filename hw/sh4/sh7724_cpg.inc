@@ -81,6 +81,7 @@ CASE(SH7724_CPG_LSTATUS, SH7724_CPG_LSTATUS_S,
 ,
   TODO
 )
+
 #undef S
 #endif /* HANDLER */
      
