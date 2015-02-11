@@ -54,13 +54,33 @@ struct SH7724CPG cpg;
 #define S (s->cpg)
 // Case: register, size, read, write
 CASE(SH7724_CPG_FRQCRA, SH7724_CPG_FRQCRA_S,
-     printf("SH7724_CPG_FRQCRA read\n");
+  printf("SH7724_CPG_FRQCRA read\n");
   return (S.stc << 24) | (S.ifc << 20) | (S.sfc << 12) | (S.bfc << 8) | (S.p1fc);
 ,
   // Handle validation
-     printf("FRQCRA got %08X\n", value);
+  printf("FRQCRA got %08X\n", (uint32_t)value);
+  TODO
 )
-     
+CASE(SH7724_CPG_FRQCRB, SH7724_CPG_FRQCRB_S,
+  TODO
+,
+  TODO
+)
+CASE(SH7724_CPG_PLLCR, SH7724_CPG_PLLCR_S,
+  TODO
+,
+  TODO
+)
+CASE(SH7724_CPG_FLLFRQ, SH7724_CPG_FLLFRQ_S,
+  TODO
+,
+  TODO
+)
+CASE(SH7724_CPG_LSTATUS, SH7724_CPG_LSTATUS_S,
+  TODO
+,
+  TODO
+)
 #undef S
 #endif /* HANDLER */
      

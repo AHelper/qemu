@@ -543,56 +543,35 @@ static uint64_t sh7305_mem_read(void *opaque,
   
 #define HANDLER
 #define BASE 0xA4000000
-#define BAD_SIZE(a,s) do{ printf("Invalid peripheral read size: A=" a " S=%d addr=%08X size=%d\n", s, addr+BASE, size); return 0; }while(0)
-#define TODO do{ printf(#S " read TODO\n"); }while(0)
+#define BAD_SIZE(a,s) do{ printf("Invalid peripheral read size: A=" a " S=%d addr=%08X size=%d\n", s, (uint32_t)addr+BASE, size); return 0; }while(0)
+#define TODO do{ printf("%s read TODO\n", as); }while(0);
+#define INVALID printf("Invalid read: A=%s S=%d addr=%08X size=%d\n", as, s, (uint32_t)addr+BASE, size); return 0;
 #define CASE(a,s,r,w) \
     case ((a)-BASE): \
+    { \
+      const char *as __attribute__((unused)) = #a; \
       if(size != (s)) BAD_SIZE(#a,s); \
       else {r} \
-      break;
+      break; \
+    }
 
       switch(addr)
       {
 // SH7724 CPG
 #include "sh7724_cpg.inc"
-// #include "sh7720_rtc.inc"
+#include "sh7720_rtc.inc"
         default:
-//           printf("Unknown peripheral read: addr=%08X size=%d\n", addr+BASE, size); 
+          printf("Unknown peripheral read: addr=%08X size=%d\n", addr+BASE, size); 
 	  break;
       }
       return 0;
 
 #undef CASE
+#undef INVALID
+#undef TODO
 #undef BAD_SIZE
 #undef BASE
 #undef HANDLER
-  /*
-  switch(size)
-  {
-    case 1:
-      switch(addr)
-      {
-        default:
-          printf("Unknown read of size 1 at %08X\n", addr);
-      }
-      break;
-    case 2:
-      switch(addr)
-      {
-        default:
-          printf("Unknown read of size 2 at %08X\n", addr);
-      }
-      break;
-    case 4:
-      switch(addr)
-      {
-        default:
-          printf("Unknown read of size 4 at %08X\n", addr);
-      }
-      break;
-    default:
-      printf("Unknown peripheral read size '%d'\n", size);
-  }*/
 }
 
 static void sh7305_mem_write(void *opaque,
@@ -604,25 +583,32 @@ static void sh7305_mem_write(void *opaque,
   
 #define HANDLER
 #define BASE 0xA4000000
-#define BAD_SIZE(a,s) do{ printf("Invalid peripheral write size: A=" a " S=%d addr=%08X size=%d value=%08X\n", s, addr+BASE, size, value); return 0; }while(0)
-#define TODO do{ printf(#S " write TODO\n"); }while(0)
+#define BAD_SIZE(a,s) do{ printf("Invalid peripheral write size: A=" a " S=%d addr=%08X size=%d value=%08X\n", s, (uint32_t)addr+BASE, size, (uint32_t)value); }while(0)
+#define TODO do{ printf("%s write TODO\n",as); }while(0);
+#define INVALID printf("Invalid write: A=%s S=%d addr=%08X size=%d value=%08X\n", as, s, (uint32_t)addr+BASE, size, (uint32_t)value);
 #define CASE(a,s,r,w) \
     case ((a)-BASE): \
+    { \
+      const char *as = #a; \
       if(size != (s)) BAD_SIZE(#a,s); \
       else {w} \
-      break;
+      break; \
+    }
 
       switch(addr)
       {
 // SH7724 CPG
 #include "sh7724_cpg.inc"
+#include "sh7720_rtc.inc"
         default:
-//           printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", addr+BASE, size, value);
+          printf("Unknown peripheral write: addr=%08X size=%d value=%08x\n", addr+BASE, size, value);
 	  break;
       }
-      return 0;
 
 #undef CASE
+#undef INVALID
+#undef TODO
+#undef BAD_SIZE
 #undef BASE
 #undef HANDLER
 }
