@@ -875,5 +875,5 @@ bool superh_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
 
 void superh_cpu_unassigned_access(CPUState *cpu, hwaddr addr, bool is_write, bool is_exec, int opaque, unsigned size)
 {
-  printf("Unassigned %s size %d at %08X\n", is_write ? "read" : "write", size, addr);
+  printf("Unassigned %s size %d at %08X\n", is_write ? "write" : "read", size, addr);
 }
