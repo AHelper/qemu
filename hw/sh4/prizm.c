@@ -42,6 +42,7 @@ static void prizm_init(MachineState *machine)
     
     MemoryRegion *sysmem = get_system_memory();
     MemoryRegion *sdram = g_new(MemoryRegion, 1);
+    MemoryRegion *onchip_ram = g_new(MemoryRegion, 4);
     MemoryRegion *flashalias = g_new(MemoryRegion, 1);
     MemoryRegion *flash0mem;
     DriveInfo *flash;
@@ -86,6 +87,18 @@ static void prizm_init(MachineState *machine)
     memory_region_init_ram(sdram, NULL, "sdram", 0x2000000, &error_abort);
     vmstate_register_ram_global(sdram);
     memory_region_add_subregion(sysmem, 0x08000000, sdram);
+    memory_region_init_ram(&onchip_ram[0], NULL, "ram.rs", 0x3ff9, &error_abort);
+    vmstate_register_ram_global(&onchip_ram[0]);
+    memory_region_add_subregion(sysmem, 0xFD800000, &onchip_ram[0]);
+    memory_region_init_ram(&onchip_ram[1], NULL, "ram.il", 0x1000, &error_abort);
+    vmstate_register_ram_global(&onchip_ram[1]);
+    memory_region_add_subregion(sysmem, 0xE5200000, &onchip_ram[1]);
+    memory_region_init_ram(&onchip_ram[2], NULL, "ram.x", 0x2000, &error_abort);
+    vmstate_register_ram_global(&onchip_ram[2]);
+    memory_region_add_subregion(sysmem, 0xE5007000, &onchip_ram[2]);
+    memory_region_init_ram(&onchip_ram[3], NULL, "ram.y", 0x2000, &error_abort);
+    vmstate_register_ram_global(&onchip_ram[3]);
+    memory_region_add_subregion(sysmem, 0xE5017000, &onchip_ram[3]);
 //     memory_region_init_ram(rom, NULL, "shix.rom", 0x4000, &error_abort);
 //     vmstate_register_ram_global(rom);
 //     memory_region_set_readonly(rom, true);
